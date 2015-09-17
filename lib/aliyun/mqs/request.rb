@@ -30,14 +30,15 @@ module Aliyun::Mqs
     end
 
     def initialize method: "get", path: "/", mqs_headers: {}, params: {}
+      path="/queues#{path}"
       conf = {
-        host: "#{owner_id}.mqs-#{region}.aliyuncs.com",
+        host: "#{owner_id}.mns.#{region}.aliyuncs.com",
         path: path
       }
       conf.merge!(query: params.to_query) unless params.empty?
       @uri = URI::HTTP.build(conf)
       @method = method
-      @mqs_headers = mqs_headers.merge("x-mqs-version" => "2014-07-08")
+      @mqs_headers = mqs_headers.merge("x-mns-version" => "2015-06-06")
     end
 
     def content type, values={}
@@ -66,6 +67,7 @@ module Aliyun::Mqs
       begin
         RestClient.send *[method, uri.to_s, body, headers].compact
       rescue Exception => ex
+        puts ex.inspect
         puts ex.message
       end
     end
@@ -80,8 +82,9 @@ module Aliyun::Mqs
       canonical_mq_headers = mqs_headers.sort.collect{|k,v| "#{k.downcase}:#{v}"}.join("\n")
       method = self.method.to_s.upcase
       signature = [method, content_md5 || "" , content_type || "" , date, canonical_mq_headers, canonical_resource].join("\n")
+      #signature = method+"\n" + (content_md5 || "")+"\n" + (content_type || "") +"\n" + date+ "\n"+ canonical_mq_headers+canonical_resource
       sha1 = Digest::HMAC.digest(signature, key, Digest::SHA1)
-      "MQS #{access_id}:#{Base64.encode64(sha1).chop}"
+      "MNS #{access_id}:#{Base64.encode64(sha1).chop}"
     end
 
   end

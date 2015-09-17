@@ -4,7 +4,7 @@ require 'rest-client'
 require 'nokogiri'
 require 'yaml'
 require 'aliyun/mqs/version'
-# RestClient.log=STDOUT
+RestClient.log=STDOUT
 
 # Monkey patch hash to support xml array and xml object
 class Hash
@@ -32,12 +32,12 @@ module Aliyun
           if defined? Rails
             config_file = Rails.root.join("config/aliyun-mqs.yml")
           else
-            config_file = File.expand_path("~/.aliyun-mqs.yml")
+            config_file = File.expand_path("config/aliyun-mqs.yml")
           end
 
           if (File.exist?(config_file))
             config = YAML.load(ERB.new(File.new(config_file).read).result)
-            config = config[Rails.env] if defined? Rails
+            # config = config[Rails.env] if defined? Rails
           end
           OpenStruct.new(config || {access_id:"", key:"", region:"", owner_id:""})
         end

@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'aliyun/mqs/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'aliyun-mqs-V2'
+  spec.name          = 'alimns'
   spec.version       = Aliyun::Mqs::VERSION
   spec.authors       = ["mgampkay","skinnyworm"]
   spec.email         = ["mgampkay@gmail.com", "askinnyworm@gmail.com"]
